@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  go:
+    container_name: go
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - 8080:8080
+    environment:
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: db_practice
+      MYSQL_USER: root
+    # env_file:
+    #   - ./mysql/.env
+    depends_on:
+      - mysql
+    volumes:
+      - type: bind
+        source: .
+        target: /go/src
+    # networks:
+    #   - golang_test_network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_tutorial1
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: db_practice
+      MYSQL_USER: root
+    volumes:
+      - ./dbdata:/var/lib/mysql
+    ports:
+      - 3305:3306
+
+#   db:
+#     container_name: db
+#     build:
+#       context: ./mysql
+#       dockerfile: Dockerfile
+#     tty: true
+#     platform: linux/x86_64
+#     ports:
+#       - 3306:3306
+#     env_file:
+#       - ./mysql/.env
+#     volumes:
+#       - type: volume
+#         source: mysql_test_volume
+#         target: /var/lib/mysql
+#       - type: bind
+#         source: ./mysql/init
+#         target: /docker-entrypoint-initdb.d
+#     networks:
+#       - golang_test_network
+
+# volumes:
+#   mysql_test_volume:
+#     name: mysql_test_volume
+
+# networks:
+#   golang_test_network:
+#     external: true
